@@ -19,8 +19,12 @@ h1 { color:var(--oranje); }
 .legenda { display:flex; flex-wrap:wrap; gap:12px; margin:18px 0; }
 .legenda span { padding:7px 10px; border-radius:6px; background:#f5f5f5; }
 #maanden {
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  max-width:850px;
+  margin:0 auto;
+}
 }
 .maand {
   border:1px solid #ddd; border-radius:12px; padding:12px;
@@ -120,9 +124,12 @@ h1 { color:var(--oranje); }
 <script>
 
 (function () {
-  const maanden = [
-    "April","Mei","Juni","Juli",
-    "Augustus","September","Oktober"
+  const namen = [
+  "April – mei",
+  "Juni – juli",
+  "Augustus – september",
+  "Oktober"
+];
   ];
   const weekdagen = ["Ma","Di","Wo","Do","Vr","Za","Zo"];
 
@@ -150,8 +157,8 @@ function toonMaanden() {
 
   blokken.forEach(function(blok, index) {
     blok.style.display =
-      index >= maandPagina * 3 &&
-      index < maandPagina * 3 + 3 ? "block" : "none";
+      index >= maandPagina * 2 &&
+      index < maandPagina * 2 + 2 ? "block" : "none";
   });
 
   document.getElementById("periodeLabel").textContent =
@@ -161,7 +168,7 @@ function toonMaanden() {
     maandPagina === 0;
 
   document.getElementById("volgendeMaanden").disabled =
-    maandPagina === 2;
+    maandPagina === 3;
 }
 
 document.getElementById("vorigeMaanden").addEventListener("click", function() {
@@ -172,7 +179,7 @@ document.getElementById("vorigeMaanden").addEventListener("click", function() {
 });
 
 document.getElementById("volgendeMaanden").addEventListener("click", function() {
-  if (maandPagina < 2) {
+  if (maandPagina < 3) {
     maandPagina++;
     toonMaanden();
   }
