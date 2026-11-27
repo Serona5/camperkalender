@@ -267,7 +267,8 @@ document.getElementById("volgendeMaanden").addEventListener("click", function() 
         toonMaanden();
   }
 
-  function berekenPrijs() {
+ 
+function berekenPrijs() {
     if(!ophalen) {
       resultaat.innerHTML =
         "<h2>Jouw gekozen huurperiode</h2>Kies je ophaaldatum.";
@@ -282,6 +283,13 @@ document.getElementById("volgendeMaanden").addEventListener("click", function() 
     }
 
     const dagen = Math.round((inleveren - ophalen) / 86400000);
+
+    if(inleveren <= ophalen) {
+      resultaat.innerHTML =
+        "<h2>Ongeldige periode</h2>Kies een latere inleverdatum.";
+      return;
+    }
+
     const bevatHoogseizoen = (() => {
       for(let i=0; i<=dagen; i++) {
         const d = new Date(ophalen);
@@ -295,11 +303,6 @@ document.getElementById("volgendeMaanden").addEventListener("click", function() 
       inleveren.getDay() === 5 &&
       (dagen + 1) % 7 === 0;
 
-    if(inleveren <= ophalen) {
-      resultaat.innerHTML = "<h2>Ongeldige periode</h2>Kies een latere inleverdatum.";
-      return;
-    }
-
     if(!standaard) {
       if(bevatHoogseizoen) {
         resultaat.innerHTML =
@@ -311,6 +314,10 @@ document.getElementById("volgendeMaanden").addEventListener("click", function() 
           "<h2>Prijs op aanvraag</h2>" +
           "Ophalen: " + datumTekst(ophalen) + "<br>" +
           "Inleveren: " + datumTekst(inleveren) +
+          "<p>Huurprijs: Op aanvraag</p>" +
+          "<p>Inbegrepen kilometers: Op aanvraag</p>" +
+          "<p>Schoonmaakkosten: €85<br>" +
+          "Borg: €1.000 (apart, niet inbegrepen)</p>" +
           "<p>Voor afwijkende huurperiodes in het laagseizoen maken we graag een persoonlijke prijsopgave.</p>";
       }
       return;
@@ -327,13 +334,17 @@ document.getElementById("volgendeMaanden").addEventListener("click", function() 
         d.setDate(d.getDate() + week*7 + dag);
         if(isHoogseizoen(d)) hoogDagen++;
       }
+
       const weekprijs = hoogDagen >= 4 ? 850 : 750;
       totaal += weekprijs;
+
       uitleg += "Week " + (week+1) + ": €" + weekprijs +
         (weekprijs === 850 ? " (hoogseizoen)" : " (laagseizoen)") + "<br>";
     }
 
     const schoonmaak = 85;
+    const kilometers = aantalWeken * 1500;
+
     resultaat.innerHTML =
       "<h2>Prijsindicatie</h2>" +
       "Ophalen: " + datumTekst(ophalen) + "<br>" +
@@ -343,12 +354,6 @@ document.getElementById("volgendeMaanden").addEventListener("click", function() 
       "Schoonmaakkosten: €" + schoonmaak + "<br>" +
       "<strong>Totaal indicatie: €" + (totaal+schoonmaak) + "</strong><br>" +
       "Borg: €1.000 (apart, niet inbegrepen)<br><br>" +
-      "<span class='klein'>Inclusief 1.500 km per huurweek. Extra kilometers kosten €0,25 per km en worden na terugkomst afgerekend.</span>";
+      "<strong>Inbegrepen kilometers: " + kilometers.toLocaleString("nl-NL") + " km</strong><br>" +
+      "<span class='klein'>Extra kilometers kosten €0,25 per km en worden na terugkomst afgerekend.</span>";
   }
-
-  tekenKalender();
-})();
-</script>
-
-</body>
-</html>
