@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camper huren 2027 - Camperbouw & Verhuur Dongen</title>
+<style>
+:root { --oranje:#eb8113; --zwart:#222; }
+body {
+  font-family:Arial,sans-serif; color:var(--zwart);
+  margin:0; padding:16px; background:#fff;
+}
+h1 { color:var(--oranje); }
+.intro { line-height:1.5; }
+.legenda { display:flex; flex-wrap:wrap; gap:12px; margin:18px 0; }
+.legenda span { padding:7px 10px; border-radius:6px; background:#f5f5f5; }
+#maanden {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+.maand {
+  border:1px solid #ddd; border-radius:12px; padding:12px;
+}
+.maand h2 { font-size:19px; color:var(--oranje); margin:4px 0 12px; }
+.grid {
+  display:grid; grid-template-columns:repeat(7,1fr); gap:4px;
+  text-align:center;
+}
+.weekdag { font-size:12px; font-weight:bold; padding:6px 0; }
+.dag {
+  min-width:0; padding:9px 2px; border:1px solid #eee;
+  border-radius:6px; background:#f7f7f7; color:#222;
+  font-size:13px; cursor:pointer;
+}
+.dag:hover:not(:disabled) { border-color:var(--oranje); }
+.dag.hoog { background:#fff0df; border-color:#eb8113; }
+.dag.laag { background:#f1f1f1; }
+.dag.gekozen { background:var(--oranje); color:white; border-color:var(--oranje); }
+.dag.tussen { background:#ffe0bd; }
+.dag:disabled { opacity:.35; cursor:not-allowed; }
+#resultaat {
+  margin-top:22px; padding:18px; border:2px solid var(--oranje);
+  border-radius:12px; line-height:1.6;
+}
+#resultaat h2 { color:var(--oranje); margin-top:0; }
+.knop {
+  background:var(--oranje); color:white; border:0;
+  padding:10px 16px; border-radius:7px; cursor:pointer;
+  font-size:15px; margin-top:10px;
+}
+.klein { font-size:13px; color:#555; }
+</style>
+</head>
+<body>
+
+<h1>Huur jouw camper – 2027</h1>
+<p class="intro">
+Kies eerst je gewenste ophaaldatum en daarna je inleverdatum.
+De kalender toont de huurprijzen voor het seizoen 2027.
+</p>
+
+<div class="legenda">
+  <span>🟠 Hoogseizoen: €850 per week</span>
+  <span>Grijs: Laagseizoen €750 per week</span>
+  <span>🟠 Geselecteerde datum</span>
+</div>
+
+<div id="maanden"></div>
+
+<div id="resultaat" aria-live="polite">
+  <h2>Jouw gekozen huurperiode</h2>
+  Klik eerst op de gewenste ophaaldatum en daarna op de inleverdatum.
+</div>
+
+<script>
+(function () {
+  const maanden = [
+    "April","Mei","Juni","Juli",
+    "Augustus","September","Oktober"
+  ];
+  const weekdagen = ["Ma","Di","Wo","Do","Vr","Za","Zo"];
+
+  const feestdagen = [
+    "2027-04-27",
+    "2027-05-05",
+    "2027-05-06",
+    "2027-05-17"
+  ];
+
+  let ophalen = null;
+  let inleveren = null;
+
+  const container = document.getElementById("maanden");
+  const resultaat = document.getElementById("resultaat");
+
+  function datumTekst(d) {
+    return d.toLocaleDateString("nl-NL", {
+      day:"2-digit", month:"2-digit", year:"numeric"
+    });
+  }
+
+  function sleutel(d) {
+    return d.getFullYear() + "-" +
+      String(d.getMonth()+1).padStart(2,"0") + "-" +
+      String(d.getDate()).padStart(2,"0");
+  }
+
+  function isGeblokkeerd(d) {
+    return d.getDay() === 0 || feestdagen.includes(sleutel(d));
+  }
+
+  function isHoogseizoen(d) {
+    return d.getMonth() === 6 || d.getMonth() === 7;
+  }
+
+  function zelfdeDag(a,b) {
+    return a && b && sleutel(a) === sleutel(b);
+  }
+
+  function inPeriode(d) {
+    return ophalen && inleveren && d > ophalen && d < inleveren;
+  }
+
+  function tekenKalender() {
+    container.innerHTML = "";
+
+    maanden.forEach(function(naam, index) {
+      const maandnummer = index + 3;
+      const eerste = new Date(2027, maandnummer, 1);
+      const aantal = new Date(2027, maandnummer + 1, 0).getDate();
+      const start = (eerste.getDay() + 6) % 7;
+
+      const blok = document.createElement("section");
+      blok.className = "maand";
+
+      let html = '<h2>' + naam + ' 2027</h2><div class="grid">';
+      weekdagen.forEach(d => {
+        html += '<div class="weekdag">' + d + '</div>';
+      });
+
+      for(let i=0; i<start; i++) html += "<div></div>";
+
+      for(let dag=1; dag<=aantal; dag++) {
+        const d = new Date(2027, maandnummer, dag);
+        const hoog = isHoogseizoen(d);
+        let klasse = hoog ? "hoog" : "laag";
+
+        if(zelfdeDag(d, ophalen) || zelfdeDag(d, inleveren)) {
+          klasse += " gekozen";
+        } else if(inPeriode(d)) {
+          klasse += " tussen";
+        }
+
+        const uit = isGeblokkeerd(d);
+        html += '<button type="button" class="dag ' + klasse +
+          '" data-datum="' + sleutel(d) + '"' +
+          (uit ? ' disabled title="Zondag of feestdag"' : '') +
+          '>' + dag + '</button>';
+      }
+
+      html += '</div>';
+      blok.innerHTML = html;
+      container.appendChild(blok);
+    });
+
+    container.querySelectorAll("button[data-datum]").forEach(knop => {
+      knop.addEventListener("click", function() {
+        const delen = this.dataset.datum.split("-").map(Number);
+        const gekozen = new Date(delen[0], delen[1]-1, delen[2]);
+
+        if(!ophalen || inleveren || gekozen <= ophalen) {
+          ophalen = gekozen;
+          inleveren = null;
+        } else {
+          inleveren = gekozen;
+        }
+
+        tekenKalender();
+        berekenPrijs();
+      });
+    });
+  }
+
+  function berekenPrijs() {
+    if(!ophalen) {
+      resultaat.innerHTML =
+        "<h2>Jouw gekozen huurperiode</h2>Kies je ophaaldatum.";
+      return;
+    }
+
+    if(!inleveren) {
+      resultaat.innerHTML =
+        "<h2>Jouw gekozen huurperiode</h2>Ophalen: " +
+        datumTekst(ophalen) + "<br>Kies nu je inleverdatum.";
+      return;
+    }
+
+    const dagen = Math.round((inleveren - ophalen) / 86400000);
+    const bevatHoogseizoen = (() => {
+      for(let i=0; i<=dagen; i++) {
+        const d = new Date(ophalen);
+        d.setDate(d.getDate()+i);
+        if(isHoogseizoen(d)) return true;
+      }
+      return false;
+    })();
+
+    const standaard = ophalen.getDay() === 6 &&
+      inleveren.getDay() === 5 &&
+      (dagen + 1) % 7 === 0;
+
+    if(inleveren <= ophalen) {
+      resultaat.innerHTML = "<h2>Ongeldige periode</h2>Kies een latere inleverdatum.";
+      return;
+    }
+
+    if(!standaard) {
+      if(bevatHoogseizoen) {
+        resultaat.innerHTML =
+          "<h2>Deze periode is niet mogelijk als standaardboeking</h2>" +
+          "In juli en augustus geldt ophalen op zaterdag en inleveren op vrijdag. " +
+          "Kies een standaard huurweek of neem contact met ons op.";
+      } else {
+        resultaat.innerHTML =
+          "<h2>Prijs op aanvraag</h2>" +
+          "Ophalen: " + datumTekst(ophalen) + "<br>" +
+          "Inleveren: " + datumTekst(inleveren) +
+          "<p>Voor afwijkende huurperiodes in het laagseizoen maken we graag een persoonlijke prijsopgave.</p>";
+      }
+      return;
+    }
+
+    let totaal = 0;
+    let uitleg = "";
+    let aantalWeken = (dagen + 1) / 7;
+
+    for(let week=0; week<aantalWeken; week++) {
+      let hoogDagen = 0;
+      for(let dag=0; dag<7; dag++) {
+        const d = new Date(ophalen);
+        d.setDate(d.getDate() + week*7 + dag);
+        if(isHoogseizoen(d)) hoogDagen++;
+      }
+      const weekprijs = hoogDagen >= 4 ? 850 : 750;
+      totaal += weekprijs;
+      uitleg += "Week " + (week+1) + ": €" + weekprijs +
+        (weekprijs === 850 ? " (hoogseizoen)" : " (laagseizoen)") + "<br>";
+    }
+
+    const schoonmaak = 85;
+    resultaat.innerHTML =
+      "<h2>Prijsindicatie</h2>" +
+      "Ophalen: " + datumTekst(ophalen) + "<br>" +
+      "Inleveren: " + datumTekst(inleveren) + "<br><br>" +
+      uitleg + "<hr>" +
+      "Huurprijs: €" + totaal + "<br>" +
+      "Schoonmaakkosten: €" + schoonmaak + "<br>" +
+      "<strong>Totaal indicatie: €" + (totaal+schoonmaak) + "</strong><br>" +
+      "Borg: €1.000 (apart, niet inbegrepen)<br><br>" +
+      "<span class='klein'>Inclusief 1.500 km per huurweek. Extra kilometers kosten €0,25 per km en worden na terugkomst afgerekend.</span>";
+  }
+
+  tekenKalender();
+})();
+</script>
+
+</body>
+</html>
