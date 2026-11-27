@@ -25,7 +25,6 @@ h1 { color:var(--oranje); }
   max-width:850px;
   margin:0 auto;
 }
-}
 .maand {
   border:1px solid #ddd; border-radius:12px; padding:12px;
 }
@@ -124,12 +123,9 @@ h1 { color:var(--oranje); }
 <script>
 
 (function () {
-  const namen = [
-  "April – mei",
-  "Juni – juli",
-  "Augustus – september",
-  "Oktober"
-];
+  const maanden = [
+    "April","Mei","Juni","Juli",
+    "Augustus","September","Oktober"
   ];
   const weekdagen = ["Ma","Di","Wo","Do","Vr","Za","Zo"];
 
@@ -149,11 +145,12 @@ h1 { color:var(--oranje); }
 
 function toonMaanden() {
   const blokken = container.querySelectorAll(".maand");
-  const namen = [
-    "April – juni",
-    "Juli – september",
-    "Oktober"
-  ];
+const namen = [
+  "April – mei",
+  "Juni – juli",
+  "Augustus – september",
+  "Oktober"
+];
 
   blokken.forEach(function(blok, index) {
     blok.style.display =
