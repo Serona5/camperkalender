@@ -80,19 +80,39 @@ h1 { color:var(--oranje); }
 .klein { font-size:13px; color:#555; }
 </style>
 </head>
+
 <body>
 
 <h1>Huur jouw camper – 2027</h1>
+
 <p class="intro">
-Kies eerst je gewenste ophaaldatum en daarna je inleverdatum.In juli en augustus is ophalen uitsluitend mogelijk op zaterdag en inleveren op vrijdag. Op zondagen en Nederlandse feestdagen is ophalen en inleveren niet mogelijk. Afwijkende periodes in het laagseizoen zijn mogelijk op aanvraag.
+Kies eerst je gewenste ophaaldatum en daarna je inleverdatum.
+In juli en augustus is ophalen uitsluitend mogelijk op zaterdag en inleveren op vrijdag.
+Op zondagen en Nederlandse feestdagen is ophalen en inleveren niet mogelijk.
+Afwijkende periodes in het laagseizoen zijn mogelijk op aanvraag.
 </p>
 
 <div class="legenda">
-  <span><span style="display:inline-block;width:13px;height:13px;background:#555555;border-radius:3px;vertical-align:middle;margin-right:6px;"></span>Hoogseizoen: €850 per week</span>
+  <span>
+    <span style="display:inline-block;width:13px;height:13px;background:#555;border-radius:3px;vertical-align:middle;margin-right:6px;"></span>
+    Hoogseizoen: €850 per week
+  </span>
 
-  <span><span style="display:inline-block;width:13px;height:13px;background:#eeeeee;border:1px solid #cccccc;border-radius:3px;vertical-align:middle;margin-right:6px;"></span>Laagseizoen: €750 per week</span>
+  <span>
+    <span style="display:inline-block;width:13px;height:13px;background:#eee;border:1px solid #ccc;border-radius:3px;vertical-align:middle;margin-right:6px;"></span>
+    Laagseizoen: €750 per week
+  </span>
 
-  <span><span style="display:inline-block;width:13px;height:13px;background:#eb8113;border-radius:3px;vertical-align:middle;margin-right:6px;"></span>Geselecteerde datum</span>
+  <span>
+    <span style="display:inline-block;width:13px;height:13px;background:#eb8113;border-radius:3px;vertical-align:middle;margin-right:6px;"></span>
+    Geselecteerde datum
+  </span>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin:15px 0;">
+  <button type="button" id="vorigeMaanden" class="knop">← Vorige</button>
+  <strong id="periodeLabel"></strong>
+  <button type="button" id="volgendeMaanden" class="knop">Volgende →</button>
 </div>
 
 <div id="maanden"></div>
@@ -103,6 +123,7 @@ Kies eerst je gewenste ophaaldatum en daarna je inleverdatum.In juli en augustus
 </div>
 
 <script>
+
 (function () {
   const maanden = [
     "April","Mei","Juni","Juli",
