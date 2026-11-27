@@ -1,4 +1,9 @@
-
+<div id="maanden"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin:15px 0;">
+  <button type="button" id="vorigeMaanden" class="knop">← Vorige</button>
+  <strong id="periodeLabel"></strong>
+  <button type="button" id="volgendeMaanden" class="knop">Volgende →</button>
+</div>
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -6,6 +11,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Camper huren 2027 - Camperbouw & Verhuur Dongen</title>
 <style>
+  .maand {
+  display:none;
+}
 :root { --oranje:#eb8113; --zwart:#222; }
 body {
   font-family:Arial,sans-serif; color:var(--zwart);
@@ -112,6 +120,45 @@ Kies eerst je gewenste ophaaldatum en daarna je inleverdatum.In juli en augustus
 
   const container = document.getElementById("maanden");
   const resultaat = document.getElementById("resultaat");
+  let maandPagina = 0;
+
+function toonMaanden() {
+  const blokken = container.querySelectorAll(".maand");
+  const namen = [
+    "April – juni",
+    "Juli – september",
+    "Oktober"
+  ];
+
+  blokken.forEach(function(blok, index) {
+    blok.style.display =
+      index >= maandPagina * 3 &&
+      index < maandPagina * 3 + 3 ? "block" : "none";
+  });
+
+  document.getElementById("periodeLabel").textContent =
+    namen[maandPagina];
+
+  document.getElementById("vorigeMaanden").disabled =
+    maandPagina === 0;
+
+  document.getElementById("volgendeMaanden").disabled =
+    maandPagina === 2;
+}
+
+document.getElementById("vorigeMaanden").addEventListener("click", function() {
+  if (maandPagina > 0) {
+    maandPagina--;
+    toonMaanden();
+  }
+});
+
+document.getElementById("volgendeMaanden").addEventListener("click", function() {
+  if (maandPagina < 2) {
+    maandPagina++;
+    toonMaanden();
+  }
+});
 
   function datumTekst(d) {
     return d.toLocaleDateString("nl-NL", {
@@ -199,6 +246,7 @@ Kies eerst je gewenste ophaaldatum en daarna je inleverdatum.In juli en augustus
         berekenPrijs();
       });
     });
+        toonMaanden();
   }
 
   function berekenPrijs() {
