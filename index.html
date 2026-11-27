@@ -34,10 +34,27 @@ h1 { color:var(--oranje); }
   font-size:13px; cursor:pointer;
 }
 .dag:hover:not(:disabled) { border-color:var(--oranje); }
-.dag.hoog { background:#fff0df; border-color:#eb8113; }
-.dag.laag { background:#f1f1f1; }
-.dag.gekozen { background:var(--oranje); color:white; border-color:var(--oranje); }
-.dag.tussen { background:#ffe0bd; }
+.dag.hoog {
+  background:#ffe4c5;
+  border:1px solid #eb8113;
+  color:#854000;
+}
+
+.dag.laag {
+  background:#f1f1f1;
+}
+
+.dag.gekozen {
+  background:#222222;
+  color:#ffffff;
+  border:2px solid #eb8113;
+  font-weight:bold;
+}
+
+.dag.tussen {
+  background:#fff0df;
+  border:1px solid #f3c18e;
+}
 .dag:disabled { opacity:.35; cursor:not-allowed; }
 #resultaat {
   margin-top:22px; padding:18px; border:2px solid var(--oranje);
